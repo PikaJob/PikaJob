@@ -1,0 +1,64 @@
+{
+  "name": "pikajob",
+  "version": "1.0.0",
+  "description": "A Kanban board tracking job search and application progress",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"NODE_ENV=development webpack-dev-server --open --hot\" \"nodemon server/server.js\"",
+    "dev-frontend": "NODE_ENV=development webpack-dev-server --open --hot",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PikaJob/PikaJob.git"
+  },
+  "keywords": [],
+  "contributers": [
+    {
+      "name": "Ngoc Zwolinski"
+    },
+    {
+      "name": "Claire Tischuk"
+    },
+    {
+      "name": "Zachary Skobkariov"
+    },
+    {
+      "name": "Britta Ager"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PikaJob/PikaJob/issues"
+  },
+  "homepage": "https://github.com/PikaJob/PikaJob#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "openai": "^3.2.1",
+    "path": "^0.12.7",
+    "psql": "^0.0.1",
+    "react": "^18.2.0",
+    "react-router-dom": "^6.10.0",
+    "webpack": "^5.77.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-react": "^7.18.6",
+    "babel-loader": "^9.1.2",
+    "concurrently": "^8.0.1",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.37.0",
+    "html-webpack-plugin": "^5.5.0",
+    "nodemon": "^2.0.22",
+    "prettier": "^2.8.7",
+    "style-loader": "^3.3.2",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.3",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.13.2"
+  }
+}
