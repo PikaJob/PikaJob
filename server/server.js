@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 const PORT = 3000;
+const controller = require('./controller/controller.js');
 
 // const apiRouter = require('./routes/apiRoute');
 
@@ -22,11 +23,41 @@ app.use(cookieParser());
 //Forward all request to /api to api router
 // app.use('/api', apiRouter);
 
+// route to interact with openai api
+app.post("/api/gather", controller.gather, (req, res) => {
+  res.status(200).json(res.locals.data);
+});
+
+// route to get all jobs from the database
+app.get("/api/getJobs", controller.getJobs, (req, res) => {
+  res.status(200).json(res.locals.jobs);
+});
+
+// route to retrive all the skill types
+app.get("/api/getSkillTypes", controller.getSkillTypes, (req, res) => {
+  res.status(200).json(res.locals.skillTypes);
+});
+
+//-----------------------------START OF DB Management Routes------------------------
+// route to fill in the skill types table with default values
+app.get("/api/addSkillTypes", controller.addSkillTypes, (req, res) => {
+  res.sendStatus(200);
+});
+// route to fill in the status table with default values
+app.get("/api/addStatuses", controller.addStatuses, (req, res) => {
+  res.sendStatus(200);
+});
+// route to add a table to the database, used for testing and management only
+app.post("/api/addTable", controller.addTable, (req, res) => {
+  res.sendStatus(200);
+});
+
 //---------------------------- START OF GENERAL ROUTES--------------------------
 // route handler to respond with main app
 app.get('/', (req, res) => {
   res.status(200).sendFile(path.join(__dirname, '../client/index.html'));
 });
+
 // catch-all route handler for any requests to an unknown route
 app.use('*', (req, res) => {
   res.status(404).sendFile(path.join(__dirname, '../client/404.html'));
@@ -53,7 +84,7 @@ app.use((err, req, res, next) => {
  * start server
  */
 app.listen(PORT, () => {
-  console.log(`Server listening on port: PORT...`);
+  console.log(`Server listening on port: PORT ${PORT}`);
 });
 
 module.exports = app;
