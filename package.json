@@ -39,13 +39,14 @@
     "path": "^0.12.7",
     "psql": "^0.0.1",
     "react": "^18.2.0",
-    "react-router-dom": "^6.10.0",
     "webpack": "^5.77.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
     "@babel/preset-react": "^7.18.6",
+    "@types/react": "^18.0.33",
+    "@types/react-router-dom": "^5.3.3",
     "babel-loader": "^9.1.2",
     "concurrently": "^8.0.1",
     "copy-webpack-plugin": "^11.0.0",
@@ -55,6 +56,7 @@
     "html-webpack-plugin": "^5.5.0",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.7",
+    "react-router-dom": "^6.10.0",
     "style-loader": "^3.3.2",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.3",
