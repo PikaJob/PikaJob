@@ -26,15 +26,22 @@ app.use(cookieParser());
 
 // route to interact with openai api
 app.post(
-  '/api/gather',
+  '/api/job',
   chatGPTController.getTechStack,
   chatGPTController.getJobInformation,
   controller.gather,
+  controller.frontendPackage,
   (req, res) => {
-    res.sendStatus(200);
+    res.status(200).json(res.locals.jobsObj);
   },
 );
 
+// route to grab the frontend package object
+app.get('/api/job', controller.frontendPackage, (req, res) => {
+  res.status(200).json(res.locals.jobsObj);
+});
+
+//-----------------------------START OF DB Testing Routes------------------------
 // route to get all jobs from the database
 app.get('/api/getJobs', controller.getJobs, (req, res) => {
   res.status(200).json(res.locals.jobs);
@@ -43,11 +50,6 @@ app.get('/api/getJobs', controller.getJobs, (req, res) => {
 // route to retrive all the skill types
 app.get('/api/getSkillTypes', controller.getSkillTypes, (req, res) => {
   res.status(200).json(res.locals.skillTypes);
-});
-
-// route to grab the frontend package object
-app.get('/api/getPackage', controller.frontendPackage, (req, res) => {
-  res.status(200).json(res.locals.jobsObj);
 });
 
 //-----------------------------START OF DB Management Routes------------------------

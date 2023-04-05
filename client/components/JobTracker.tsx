@@ -48,8 +48,19 @@ function JobTracker(props: JobTrackerProps): JSX.Element {
       if (submitted) {
         console.log('submitted');
         // POST - send new job as a part of request, get back a response of all the jobs (including the new job)
-        // let results = await fetch('/api/job');
-        setJobs(mockDataUpdate); // two jobs
+        let results = await fetch('/api/job', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url,
+            applied,
+          }),
+        });
+        const newJobData = await results.json();
+        setJobs(newJobData);
+        // setJobs(mockDataUpdate); // two jobs
         // Reset Application Form states:
         setUrl('');
         setApplied(true);
@@ -62,8 +73,9 @@ function JobTracker(props: JobTrackerProps): JSX.Element {
   useEffect(() => {
     const getJobs = async () => {
       // GET - get all jobs (belonging to this user? - stretch)
-      // let results = await fetch('/api/job');
-      setJobs(mockData); // one job
+      let results = await fetch('/api/job');
+      const newJobData = await results.json();
+      setJobs(newJobData);
     };
     getJobs();
   }, []);

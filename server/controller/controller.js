@@ -1,13 +1,6 @@
 const db = require('../models/models.js');
 const dbManager = require('../models/database-setup.js');
 
-const { Configuration, OpenAIApi } = require('openai');
-const configuration = new Configuration({
-  apiKey: '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',
-});
-
-const openai = new OpenAIApi(configuration);
-
 const controller = {};
 
 controller.gather = async (req, res, next) => {
