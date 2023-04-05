@@ -75,7 +75,7 @@ function JobTracker(props: JobTrackerProps): JSX.Element {
       url: ${url}
       applied: ${applied}`}
       </div>
-      <JobTrackerTable jobs={jobs} />
+      <JobTrackerTable jobs={jobs} setJobs={setJobs} />
     </>
   );
 }

@@ -13,8 +13,8 @@ function Home(): JSX.Element {
   // get currently tracked jobs
   //
 
-  return (
-    <>
+  return ( 
+    <div id="home">
       <ApplicationForm
         setUrl={setUrl}
         applied={applied}
@@ -29,7 +29,7 @@ function Home(): JSX.Element {
         submitted={submitted}
         setSubmitted={setSubmitted}
       />
-    </>
+    </div>
   );
 }
 export default Home;
