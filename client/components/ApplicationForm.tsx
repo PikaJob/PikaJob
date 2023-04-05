@@ -1,6 +1,7 @@
 import React, { ChangeEvent, MouseEvent } from 'react';
 type ApplicationFormProps = {
   setUrl: React.Dispatch<React.SetStateAction<string>>;
+  url: string;
   applied: boolean;
   setApplied: React.Dispatch<React.SetStateAction<boolean>>;
   setSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
@@ -8,7 +9,7 @@ type ApplicationFormProps = {
 
 function ApplicationForm(props: ApplicationFormProps): JSX.Element {
   // ------------------- INTIALIZE STATE & EXTRACT PROPS -----------------------
-  const { setUrl, applied, setApplied, setSubmitted } = props;
+  const { setUrl, url, applied, setApplied, setSubmitted } = props;
 
   // ------------------------- HANDLE CLICK METHODS ----------------------------
 

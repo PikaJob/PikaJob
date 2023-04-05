@@ -15,8 +15,13 @@ function Home(): JSX.Element {
 
   return ( 
     <div id="home">
+      <h2 className="font-bold text-red-200">
+        Hello
+      </h2>
+
       <ApplicationForm
         setUrl={setUrl}
+        url={url}
         applied={applied}
         setApplied={setApplied}
         setSubmitted={setSubmitted}

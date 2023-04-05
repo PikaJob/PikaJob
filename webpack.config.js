@@ -26,6 +26,11 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        include: path.resolve(__dirname, 'client'),
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
     ],
   },
   resolve: {
@@ -36,9 +41,9 @@ module.exports = {
       template: './client/index.html',
       filename: './index.html',
     }),
-    new CopyPlugin({
-      patterns: [{ from: './client/style.css' }],
-    }),
+    // new CopyPlugin({
+    //   patterns: [{ from: './client/style.css' }],
+    // }),
   ],
   devServer: {
     static: {
