@@ -4,7 +4,7 @@ const createError = require('./createError');
 //Import Database:
 const { Configuration, OpenAIApi } = require('openai');
 const configuration = new Configuration({
-  apiKey: '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',
+  apiKey: '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',
 });
 
 const openai = new OpenAIApi(configuration);

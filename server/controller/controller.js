@@ -13,8 +13,8 @@ controller.gather = async (req, res, next) => {
 
   // -------------------------- UPDATE JOBS TABLE ----------------------------
   const query = `
-    INSERT INTO jobs (submission_date, company, job_title, min_salary, max_salary, description, resume, cover_letter, sent_thank_you) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+    INSERT INTO jobs (submission_date, company, job_title, min_salary, max_salary, description, resume, cover_letter, sent_thank_you, status_id) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
     RETURNING *
     `;
   const queryArr = [
@@ -27,6 +27,7 @@ controller.gather = async (req, res, next) => {
     false,
     false,
     false,
+    1,
   ];
   // add the job to the database
   const job = await db.query(query, queryArr);
@@ -72,6 +73,45 @@ controller.gather = async (req, res, next) => {
     'UPDATE jobs SET job_title = $1, company = $2, description = $3, job_link = $4 WHERE id = $5 RETURNING *',
     [jobInfo.jobTitle, jobInfo.company, jobInfo.description, url, job.rows[0].id],
   );
+  // attach the job and the skills to the response object like controller.frontendPackage but just for one job
+  const jobsObj = {};
+  const statusTable = await db.query('SELECT * FROM status');
+  const jobId = updateJob.rows[0].id;
+  const jobTitle = updateJob.rows[0].job_title;
+  const jobLink = updateJob.rows[0].job_link;
+  const company = updateJob.rows[0].company;
+  const submissionDate = updateJob.rows[0].submission_date;
+  // status pulled from status table using the status_id (foreign key)
+  // const fetchedStatus = await db.query('SELECT * FROM status WHERE id = $1', [updateJob.status_id]);
+  // const status = fetchedStatus.rows[0].name;
+  // const status = updateJob.rows[0].status;
+  const status = statusTable.rows[job.status_id - 1].name;
+  const sentThankYouNote = updateJob.rows[0].sent_thank_you;
+  const resume = updateJob.rows[0].resume;
+  const coverLetter = updateJob.rows[0].cover_letter;
+  const minSalary = updateJob.rows[0].min_salary;
+  const maxSalary = updateJob.rows[0].max_salary;
+  const description = updateJob.rows[0].description;
+  const techStackObj = {};
+  for (const [techstackType, techArr] of Object.entries(techStack)) {
+    techStackObj[techstackType] = techArr;
+  }
+  jobsObj[jobId] = {
+    jobTitle,
+    jobLink,
+    company,
+    submissionDate,
+    status,
+    sentThankYouNote,
+    resume,
+    coverLetter,
+    minSalary,
+    maxSalary,
+    techStack: techStackObj,
+    description,
+  };
+  res.locals.jobsObj = jobsObj;
+  //console.log('res.locals.jobs: ', res.locals.jobsObj);
 
   next();
 };
@@ -113,6 +153,8 @@ controller.frontendPackage = async (req, res, next) => {
   const jobsArr = jobs.rows;
   // create an object to store the jobs and their techStacks
   const jobsObj = {};
+  // fecth the status table from the database, we will need it later
+  const statusTable = await db.query('SELECT * FROM status');
   // iterate through the jobs
   for (let i = 0; i < jobsArr.length; i++) {
     // pull out the job info
@@ -122,7 +164,9 @@ controller.frontendPackage = async (req, res, next) => {
     const jobLink = job.job_link;
     const company = job.company;
     const submissionDate = job.submission_date;
-    const status = job.status;
+    // status pulled from status table using the status_id (foreign key)
+    // const status = job.status;
+    const status = statusTable.rows[job.status_id - 1].name;
     const sentThankYouNote = job.sent_thank_you;
     const resume = job.resume;
     const coverLetter = job.cover_letter;
@@ -167,10 +211,41 @@ controller.frontendPackage = async (req, res, next) => {
       description,
     };
   }
-  console.log('jobsObj: ', jobsObj);
+  //console.log('jobsObj: ', jobsObj);
   res.locals.jobsObj = jobsObj;
   next();
 };
+
+// route to flip boolean state of sentThankYouNote, resume, coverLetter
+controller.checkOff = async (req, res, next) => {
+  // flipping the boolean value of only one of the three based on the body
+  // not returning anyhting in the response
+  const jobId = req.body.jobId;
+  const column = req.body.column;
+  const updateJob = await db.query(`UPDATE jobs SET ${column} = NOT ${column} WHERE id = $1`, [
+    jobId,
+  ]);
+  console.log(`updated ${column}`);
+  next();
+};
+
+// route to update the status of a job
+controller.updateStatus = async (req, res, next) => {
+  const jobId = req.body.jobId;
+  const status = req.body.status;
+  // grab the status id from the status table matching the status string
+  const statusId = await db.query('SELECT * FROM status WHERE name = $1', [status]);
+  // update the status of the job
+  const updateJob = await db.query('UPDATE jobs SET status_id = $1 WHERE id = $2', [
+    statusId.rows[0].id,
+    jobId,
+  ]);
+
+  console.log('updated status');
+  next();
+};
+
+// ----------------------------- DB MANAGEMENT ROUTES -----------------------------
 
 // for adding skills to the skill table
 controller.addSkill = async (req, res, next) => {
@@ -247,7 +322,17 @@ controller.purgeJobs = async (req, res, next) => {
   next();
 };
 
-// route to add tables to the database, or drop a table
+// route to generate all the tables for intial setup
+controller.generateTables = async (req, res, next) => {
+  await dbManager.createJobsTable();
+  await dbManager.createStatusTable();
+  await dbManager.createSkillTypesTable();
+  await dbManager.createSkillsTable();
+  await dbManager.createSkillsToJobTable();
+  next();
+};
+
+// route to add individual tables to the database, or to drop a table
 controller.addTable = async (req, res, next) => {
   const table = req.body.table;
   // only used for the drop table case
