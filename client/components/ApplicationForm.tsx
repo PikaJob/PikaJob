@@ -25,19 +25,35 @@ function ApplicationForm(props: ApplicationFormProps): JSX.Element {
 
   const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    console.log("form submit button event:", event);
+    console.log('form submit button event:', event);
+    // added exclamation point at end to tell Typescript the selector will never be null
+    // When I used to hover over input, it would give 'Element | null'
+    // now hovering only shows 'Element'
+    const input = document.querySelector('#url')!;
+    // HTMLInputElement has value property so TypeScript is no longer giving an error (versus Element, which does NOT have value prop)
+    // https://stackoverflow.com/questions/12989741/the-property-value-does-not-exist-on-value-of-type-htmlelement
+    (input as HTMLInputElement).value = '';
     setSubmitted(true);
-  }; 
+  };
 
   // ---------------------------- RENDER COMPONENT -----------------------------
   return (
-    <form id="addJobForm">
-      <h3> Add an Application </h3>
-      <input type='text' name='url' id='url' placeholder='url' onChange={handleUrlChange}></input>
-
-      <div id="checkboxAndSubmit">
-        <span>
-        <label htmlFor='applied'>Applied</label>
+    <div
+      id='addApplicationForm'
+      className='flex flex-col items-center bg-babyBlue border-2 w-full p-10 font-mono space-y-10 rounded-3xl'
+    >
+      <h2 className='font-bold text-3xl'> Application Form </h2>
+      <form className='flex flex-col bg-babyBlue w-3/5 font-mono space-y-2 text-lg font-bold'>
+        <label htmlFor='jobPost'>Job Post:</label>
+        <input
+          id='url'
+          className='w-full p-1'
+          type='url'
+          name='url'
+          placeholder='Enter Job Url'
+          onChange={handleUrlChange}
+        ></input>
+        <span className='space-x-5'>
           <input
             type='checkbox'
             name='applied'
@@ -45,13 +61,24 @@ function ApplicationForm(props: ApplicationFormProps): JSX.Element {
             onChange={handleAppliedChange}
             checked={applied}
           ></input>
+          <label htmlFor='applied'>Applied</label>
         </span>
+        {/* <div id='checkboxAndSubmit'> */}
+        {/* <span> */}
 
-        <button type='submit' onClick={handleSubmit}>
+        {/* </span> */}
+
+        <button
+          className='self-center transition ease-in-out delay-150 bg-salmon hover:scale-110 duration-300 text-white p-2 px-5 cursor-pointer rounded-full '
+          type='submit'
+          onClick={handleSubmit}
+          disabled={url.length === 0}
+        >
           Submit
         </button>
-      </div>
-    </form>
+        {/* </div> */}
+      </form>
+    </div>
   );
 }
 export default ApplicationForm;

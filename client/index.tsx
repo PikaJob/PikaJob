@@ -1,8 +1,9 @@
 //--------------------------------- START OF IMPORT-----------------------------
-import './style.css'
+import './assets/style.css';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Title from './components/Title';
 import Home from './components/Home';
 import JobInformation from './components/JobInformation';
 
@@ -12,6 +13,7 @@ const root = createRoot(domNode);
 
 root.render(
   <BrowserRouter>
+    <Title />
     <Routes>
       <Route path='/' element={<Home />} />
       {/* https://flaviocopes.com/react-router-data-from-route/ */}
