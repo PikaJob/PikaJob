@@ -369,9 +369,3 @@ controller.addTable = async (req, res, next) => {
 };
 
 module.exports = controller;
-
-/*
-{
- "url":"https://www.linkedin.com/jobs/view/3448324655/?refId=5f24e4b1-39cc-4ea1-a071-4f08539318a1&trackingId=tdjuRdc%2FRt6bJlKVjsDdLw%3D%3D"
-}
-*/
