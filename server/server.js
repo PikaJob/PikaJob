@@ -51,6 +51,11 @@ app.put('/api/updateStatus', controller.updateStatus, (req, res) => {
   res.sendStatus(200);
 });
 
+// route to delete a job
+app.delete('/api/deleteJob', controller.deleteJob, (req, res) => {
+  res.sendStatus(200);
+});
+
 //-----------------------------START OF DB Testing Routes------------------------
 // route to get all jobs from the database
 app.get('/api/getJobs', controller.getJobs, (req, res) => {

@@ -76,16 +76,14 @@ controller.gather = async (req, res, next) => {
   // attach the job and the skills to the response object like controller.frontendPackage but just for one job
   const jobsObj = {};
   const statusTable = await db.query('SELECT * FROM status');
+
   const jobId = updateJob.rows[0].id;
   const jobTitle = updateJob.rows[0].job_title;
   const jobLink = updateJob.rows[0].job_link;
   const company = updateJob.rows[0].company;
   const submissionDate = updateJob.rows[0].submission_date;
   // status pulled from status table using the status_id (foreign key)
-  // const fetchedStatus = await db.query('SELECT * FROM status WHERE id = $1', [updateJob.status_id]);
-  // const status = fetchedStatus.rows[0].name;
-  // const status = updateJob.rows[0].status;
-  const status = statusTable.rows[job.status_id - 1].name;
+  const status = statusTable.rows[updateJob.rows[0].status_id - 1].name;
   const sentThankYouNote = updateJob.rows[0].sent_thank_you;
   const resume = updateJob.rows[0].resume;
   const coverLetter = updateJob.rows[0].cover_letter;
@@ -165,7 +163,9 @@ controller.frontendPackage = async (req, res, next) => {
     const company = job.company;
     const submissionDate = job.submission_date;
     // status pulled from status table using the status_id (foreign key)
-    // const status = job.status;
+    if (job.status_id === null) {
+      job.status_id = 1;
+    }
     const status = statusTable.rows[job.status_id - 1].name;
     const sentThankYouNote = job.sent_thank_you;
     const resume = job.resume;
@@ -240,8 +240,18 @@ controller.updateStatus = async (req, res, next) => {
     statusId.rows[0].id,
     jobId,
   ]);
-
   console.log('updated status');
+  next();
+};
+
+// route to delete a job, from the jobs table and the skills_to_job table
+controller.deleteJob = async (req, res, next) => {
+  const jobId = req.body.jobId;
+  // delete from the jobs table
+  const deleteJob = await db.query('DELETE FROM jobs WHERE id = $1', [jobId]);
+  // delete from the skills_to_job table
+  const deleteSkills = await db.query('DELETE FROM skills_to_job WHERE job_id = $1', [jobId]);
+  console.log('deleted job');
   next();
 };
 
