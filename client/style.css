@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+#home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#addJobForm {
+    border: 2px solid black;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+#url {
+    display: block;
+}
+
+#checkboxAndSubmit {
+    display: flex;
+    justify-content: space-between;
+}

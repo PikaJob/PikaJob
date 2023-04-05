@@ -1,7 +1,9 @@
 import React from 'react';
 import { jobs } from './JobTracker';
+import { Link } from "react-router-dom";
 type JobTrackerTableProps = {
   jobs: jobs;
+  setJobs: React.Dispatch<React.SetStateAction<jobs>>;
 };
 const headersTitle = [
   'Title',
@@ -17,7 +19,16 @@ const headersTitle = [
   'Description',
 ];
 function JobTrackerTable(props: JobTrackerTableProps) {
-  const { jobs } = props;
+  const { jobs, setJobs } = props;
+  // This will send a fetch request (method: delete) to the backend, receiving all the jobs except for the deleted one
+  function handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
+    const button = event.target as HTMLButtonElement;
+    let id : string | null = button.getAttribute('id');
+    console.log('id of the row is ', id);
+    // let remainingJobs = await fetch('/api/job/${id}'); method is DELETE, with id as paramter
+    // retrieve remainingJobs and then do setJobs(remainingJobs)
+  }
+
   return (
     <table>
       <thead>
@@ -80,7 +91,16 @@ function JobTrackerTable(props: JobTrackerTableProps) {
                   </div>
                 }
               </td>
-              <td>{job.description}</td>
+              <td>  
+                {job.description}
+                {/* This is the  dynamic route to show only that one job's information */}
+                <Link to={`/${id}`} state={{ jobTitle: job.jobTitle, description: job.description, techStack: job.techStack, company: job.company}}> 
+                  View More 
+                </Link>
+                {/* This will trigger the handleDelete function */}
+                <button type='button' id={id} onClick={(event) => handleDelete(event)}> Delete </button>
+
+              </td>
             </tr>
           );
         })}
