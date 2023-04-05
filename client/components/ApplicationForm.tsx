@@ -25,6 +25,7 @@ function ApplicationForm(props: ApplicationFormProps): JSX.Element {
 
   const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    console.log("form submit button event:", event);
     setSubmitted(true);
   }; 
 
