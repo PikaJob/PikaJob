@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { mockData, mockDataUpdate } from '../assets/dummyData';
+// import { mockData, mockDataUpdate } from '../assets/dummyData';
 import JobTrackerTable from './JobTrackerTable';
 
 type JobTrackerProps = {
@@ -87,7 +87,7 @@ function JobTracker(props: JobTrackerProps): JSX.Element {
       url: ${url}
       applied: ${applied}`}
       </div>
-      <JobTrackerTable jobs={jobs} />
+      <JobTrackerTable jobs={jobs} setJobs={setJobs} />
     </>
   );
 }

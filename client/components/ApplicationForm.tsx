@@ -1,6 +1,7 @@
 import React, { ChangeEvent, MouseEvent } from 'react';
 type ApplicationFormProps = {
   setUrl: React.Dispatch<React.SetStateAction<string>>;
+  url: string;
   applied: boolean;
   setApplied: React.Dispatch<React.SetStateAction<boolean>>;
   setSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
@@ -8,7 +9,7 @@ type ApplicationFormProps = {
 
 function ApplicationForm(props: ApplicationFormProps): JSX.Element {
   // ------------------- INTIALIZE STATE & EXTRACT PROPS -----------------------
-  const { setUrl, applied, setApplied, setSubmitted } = props;
+  const { setUrl, url, applied, setApplied, setSubmitted } = props;
 
   // ------------------------- HANDLE CLICK METHODS ----------------------------
 
@@ -25,23 +26,30 @@ function ApplicationForm(props: ApplicationFormProps): JSX.Element {
   const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setSubmitted(true);
-  };
+  }; 
 
   // ---------------------------- RENDER COMPONENT -----------------------------
   return (
-    <form>
+    <form id="addJobForm">
+      <h3> Add an Application </h3>
       <input type='text' name='url' id='url' placeholder='url' onChange={handleUrlChange}></input>
-      <input
-        type='checkbox'
-        name='applied'
-        id='applied'
-        onChange={handleAppliedChange}
-        checked={applied}
-      ></input>
-      <label htmlFor='applied'>Applied</label>
-      <button type='submit' onClick={handleSubmit}>
-        Submit
-      </button>
+
+      <div id="checkboxAndSubmit">
+        <span>
+        <label htmlFor='applied'>Applied</label>
+          <input
+            type='checkbox'
+            name='applied'
+            id='applied'
+            onChange={handleAppliedChange}
+            checked={applied}
+          ></input>
+        </span>
+
+        <button type='submit' onClick={handleSubmit}>
+          Submit
+        </button>
+      </div>
     </form>
   );
 }

@@ -1,10 +1,13 @@
 //-----------------------------------IMPORT-------------------------------------
+// import and configure environmental variables
+const dotenv = require('dotenv');
+dotenv.config();
 //Import Error Handler:
 const createError = require('./createError');
 //Import Database:
 const { Configuration, OpenAIApi } = require('openai');
 const configuration = new Configuration({
-  apiKey: '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',
+  apiKey: process.env.API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
@@ -85,6 +88,7 @@ chatGPTController.getJobInformation = async (req, res, next) => {
    Return a json object with types as below:
    {"jobTitle": string, "company": string, "description": string}`;
 
+  console.log('\nopenai prompt: \n', prompt, '\n');
   try {
     const response = await openai.createCompletion({
       model: 'text-davinci-003',
