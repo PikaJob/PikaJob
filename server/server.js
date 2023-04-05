@@ -5,6 +5,7 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const PORT = 3000;
 const controller = require('./controller/controller.js');
+const chatGPTController = require('./controller/chatGPTController');
 
 // const apiRouter = require('./routes/apiRoute');
 
@@ -24,31 +25,46 @@ app.use(cookieParser());
 // app.use('/api', apiRouter);
 
 // route to interact with openai api
-app.post("/api/gather", controller.gather, (req, res) => {
-  res.status(200).json(res.locals.data);
-});
+app.post(
+  '/api/gather',
+  chatGPTController.getTechStack,
+  chatGPTController.getJobInformation,
+  controller.gather,
+  (req, res) => {
+    res.sendStatus(200);
+  },
+);
 
 // route to get all jobs from the database
-app.get("/api/getJobs", controller.getJobs, (req, res) => {
+app.get('/api/getJobs', controller.getJobs, (req, res) => {
   res.status(200).json(res.locals.jobs);
 });
 
 // route to retrive all the skill types
-app.get("/api/getSkillTypes", controller.getSkillTypes, (req, res) => {
+app.get('/api/getSkillTypes', controller.getSkillTypes, (req, res) => {
   res.status(200).json(res.locals.skillTypes);
+});
+
+// route to grab the frontend package object
+app.get('/api/getPackage', controller.frontendPackage, (req, res) => {
+  res.status(200).json(res.locals.jobsObj);
 });
 
 //-----------------------------START OF DB Management Routes------------------------
 // route to fill in the skill types table with default values
-app.get("/api/addSkillTypes", controller.addSkillTypes, (req, res) => {
+app.get('/api/addSkillTypes', controller.addSkillTypes, (req, res) => {
   res.sendStatus(200);
 });
 // route to fill in the status table with default values
-app.get("/api/addStatuses", controller.addStatuses, (req, res) => {
+app.get('/api/addStatuses', controller.addStatuses, (req, res) => {
   res.sendStatus(200);
 });
 // route to add a table to the database, used for testing and management only
-app.post("/api/addTable", controller.addTable, (req, res) => {
+app.post('/api/addTable', controller.addTable, (req, res) => {
+  res.sendStatus(200);
+});
+// route to purge jobs table
+app.get('/api/purgeJobs', controller.purgeJobs, (req, res) => {
   res.sendStatus(200);
 });
 
