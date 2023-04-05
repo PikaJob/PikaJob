@@ -1,6 +1,9 @@
+// import and configure environmental variables
+const dotenv = require('dotenv');
+dotenv.config();
+// Import Pool
 const { Pool } = require('pg');
-const PG_URI =
-  'postgres://zfiepste:gFLyXROu27tkXIl8d5KdfucPU9yETXTb@mahmud.db.elephantsql.com/zfiepste';
+const PG_URI = `${process.env.PG_URI}`;
 
 const pool = new Pool({
   connectionString: PG_URI,

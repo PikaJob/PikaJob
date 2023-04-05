@@ -30,15 +30,30 @@ app.post(
   chatGPTController.getTechStack,
   chatGPTController.getJobInformation,
   controller.gather,
-  controller.frontendPackage,
+  // controller.frontendPackage,
   (req, res) => {
     res.status(200).json(res.locals.jobsObj);
   },
 );
 
-// route to grab the frontend package object
+// route to grab the frontend package object, it contains all the jobs and skills
 app.get('/api/job', controller.frontendPackage, (req, res) => {
   res.status(200).json(res.locals.jobsObj);
+});
+
+// route to flip boolean state of sentThankYouNote, resume, coverLetter
+app.put('/api/checkOff', controller.checkOff, (req, res) => {
+  res.sendStatus(200);
+});
+
+// route to update the status of a job
+app.put('/api/updateStatus', controller.updateStatus, (req, res) => {
+  res.sendStatus(200);
+});
+
+// route to delete a job
+app.delete('/api/deleteJob', controller.deleteJob, (req, res) => {
+  res.sendStatus(200);
 });
 
 //-----------------------------START OF DB Testing Routes------------------------
@@ -53,6 +68,16 @@ app.get('/api/getSkillTypes', controller.getSkillTypes, (req, res) => {
 });
 
 //-----------------------------START OF DB Management Routes------------------------
+// route to "do all" the intial setup of the database, tables and default values
+app.get(
+  '/api/setup',
+  controller.generateTables,
+  controller.addSkillTypes,
+  controller.addStatuses,
+  (req, res) => {
+    res.sendStatus(200);
+  },
+);
 // route to fill in the skill types table with default values
 app.get('/api/addSkillTypes', controller.addSkillTypes, (req, res) => {
   res.sendStatus(200);
