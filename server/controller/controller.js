@@ -17,6 +17,7 @@ controller.gather = async (req, res, next) => {
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
     RETURNING *
     `;
+
   const queryArr = [
     new Date().toDateString(),
     'company',
@@ -29,6 +30,12 @@ controller.gather = async (req, res, next) => {
     false,
     1,
   ];
+  // check if the user ticked applied in the request body
+  if (req.body.applied) {
+    // if they did, set the job status to applied, and resume to true
+    queryArr[9] = 2;
+    queryArr[6] = true;
+  }
   // add the job to the database
   const job = await db.query(query, queryArr);
 
@@ -124,28 +131,6 @@ controller.getJobs = async (req, res, next) => {
 
 //
 controller.frontendPackage = async (req, res, next) => {
-  /*
-    Output format:
-        job ID: {
-            jobTitle: 'React Developer',
-            jobLink:
-            'https://www.linkedin.com/jobs/view/3511278005/?alternateChannel=search&refId=YrvowAjJz8bSprJD4y3DJA%3D%3D&trackingId=I9f2RGwjy7vpAyefFWtEFw%3D%3D',
-            company: 'Eliassen Group',
-            submissionDate: 'Sun Jun 14 2020',
-            status: 'applied',
-            sentThankYouNote: false,
-            resume: true,
-            coverLetter: true,
-            minSalary: 140000,
-            maxSalary: 150000,
-            techStack: {
-            FrontEnd: ['React'],
-            Testing: ['React Testing Library', 'Unit-testing', 'Jest'],
-            },
-            description:
-            'Eliassen Group is a national staffing and consulting firm with over 30 years of experience. The company offers technology staffing, agile consulting, managed services, and life sciences solutions to clients in various industries. Eliassen Group has been recognized as a "Best Staffing Firm to Work For" by Staffing Industry Analysts and was named to Forbes\' list of America\'s Best Professional Recruiting Firms.',
-        },
-    */
   // grab the jobs from the database
   const jobs = await db.query('SELECT * FROM jobs');
   const jobsArr = jobs.rows;
@@ -153,6 +138,13 @@ controller.frontendPackage = async (req, res, next) => {
   const jobsObj = {};
   // fecth the status table from the database, we will need it later
   const statusTable = await db.query('SELECT * FROM status');
+  // fetch the skills_to_job table from the database, we will need it later
+  const skillsToJob = await db.query('SELECT * FROM skills_to_job');
+  // fetch the skills table from the database, we will need it later
+  const skills = await db.query('SELECT * FROM skills');
+  // fetch the skill_types table from the database, we will need it later
+  const skillTypes = await db.query('SELECT * FROM skill_types');
+
   // iterate through the jobs
   for (let i = 0; i < jobsArr.length; i++) {
     // pull out the job info
@@ -175,26 +167,28 @@ controller.frontendPackage = async (req, res, next) => {
     const description = job.description;
 
     // grab all the skills for the current job
-    const skills = await db.query('SELECT * FROM skills_to_job WHERE job_id = $1', [jobId]);
-    const skillsArr = skills.rows;
-    // create an object to store the skill informaton for the job
+    const skillsForJob = skillsToJob.rows.filter(skill => skill.job_id === jobId);
+    // create an object to store the skills for the current job
     const skillsObj = {};
-    for (let j = 0; j < skillsArr.length; j++) {
-      // pull out the skill info
-      const skill = skillsArr[j];
-      const skillId = skill.skill_id;
-      const skillName = await db.query('SELECT * FROM skills WHERE id = $1', [skillId]);
-      const skillNameStr = skillName.rows[0].name;
-      const skillTypeId = skillName.rows[0].skill_type_id;
-      const skillType = await db.query('SELECT * FROM skill_types WHERE id = $1', [skillTypeId]);
-      const skillTypeStr = skillType.rows[0].name;
-      // sort the skills into the correct skill type
-      if (skillsObj[skillTypeStr]) {
-        skillsObj[skillTypeStr].push(skillNameStr);
-      } else {
-        skillsObj[skillTypeStr] = [skillNameStr];
-      }
+    // iterate through the skills for the current job
+    for (let j = 0; j < skillsForJob.length; j++) {
+      // grab the skill id for the current skill
+      const skillId = skillsForJob[j].skill_id;
+      // grab the skill from the skills table
+      const skill = skills.rows.filter(skill => skill.id === skillId);
+      // grab the skill type id from the skill
+      const skillTypeId = skill[0].skill_type_id;
+      // grab the skill type from the skill_types table
+      const skillType = skillTypes.rows.filter(skillType => skillType.id === skillTypeId);
+      // grab the skill name from the skill
+      const skillName = skill[0].name;
+      // grab the skill type name from the skill type
+      const skillTypeName = skillType[0].name;
+      // add the skill to the skills object
+      skillsObj[skillTypeName] = skillsObj[skillTypeName] || [];
+      skillsObj[skillTypeName].push(skillName);
     }
+
     // add the job to the jobs object
     jobsObj[jobId] = {
       jobTitle,
