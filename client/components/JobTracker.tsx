@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 // import { mockData, mockDataUpdate } from '../assets/dummyData';
 import JobTrackerTable from './JobTrackerTable';
+import Loading from './Loading';
 
 type JobTrackerProps = {
   url: string;
@@ -81,14 +82,16 @@ function JobTracker(props: JobTrackerProps): JSX.Element {
   }, []);
 
   return (
-    <>
-      <div>
-        {`Job Tracker
-      url: ${url}
-      applied: ${applied}`}
-      </div>
-      <JobTrackerTable jobs={jobs} setJobs={setJobs} />
-    </>
+    <div
+      id='job-tracker'
+      className='flex flex-col items-center bg-lime-100 border-2 w-full p-10 font-mono space-y-10 rounded-3xl'
+    >
+      {Object.keys(jobs).length > 0 ? (
+        <JobTrackerTable jobs={jobs} setJobs={setJobs} />
+      ) : (
+        <Loading />
+      )}
+    </div>
   );
 }
 export default JobTracker;

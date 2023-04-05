@@ -13,27 +13,25 @@ function Home(): JSX.Element {
   // get currently tracked jobs
   //
 
-  return ( 
-    <div id="home">
-      <h2 className="font-bold text-red-200">
-        Hello
-      </h2>
-
-      <ApplicationForm
-        setUrl={setUrl}
-        url={url}
-        applied={applied}
-        setApplied={setApplied}
-        setSubmitted={setSubmitted}
-      />
-      <JobTracker
-        url={url}
-        setUrl={setUrl}
-        applied={applied}
-        setApplied={setApplied}
-        submitted={submitted}
-        setSubmitted={setSubmitted}
-      />
+  return (
+    <div id='home' className='flex justify-center py-10 text-lg md:text-xl'>
+      <div className='flex flex-col items-center border-2 space-y-10 w-4/5 p-10 rounded-3xl'>
+        <ApplicationForm
+          setUrl={setUrl}
+          url={url}
+          applied={applied}
+          setApplied={setApplied}
+          setSubmitted={setSubmitted}
+        />
+        <JobTracker
+          url={url}
+          setUrl={setUrl}
+          applied={applied}
+          setApplied={setApplied}
+          submitted={submitted}
+          setSubmitted={setSubmitted}
+        />
+      </div>
     </div>
   );
 }
