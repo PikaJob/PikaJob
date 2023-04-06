@@ -4,7 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './client/index.js',
+  entry: './client/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
@@ -26,6 +26,11 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        include: path.resolve(__dirname, 'client'),
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
     ],
   },
   resolve: {
@@ -36,9 +41,9 @@ module.exports = {
       template: './client/index.html',
       filename: './index.html',
     }),
-    new CopyPlugin({
-      patterns: [{ from: './client/style.css' }],
-    }),
+    // new CopyPlugin({
+    //   patterns: [{ from: './client/style.css' }],
+    // }),
   ],
   devServer: {
     static: {
@@ -48,5 +53,6 @@ module.exports = {
       '/api': 'http://localhost:3000',
       secure: false,
     },
+    historyApiFallback: true,
   },
 };
