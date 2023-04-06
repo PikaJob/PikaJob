@@ -9,6 +9,8 @@ const { Configuration, OpenAIApi } = require('openai');
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
+//Import grabber:
+// const grabber = require('./grabber');
 
 const openai = new OpenAIApi(configuration);
 
@@ -38,7 +40,14 @@ chatGPTController.getTechStack = async (req, res, next) => {
     {"Language": string[], "Frontend": string[], "Backend": string[], "CICD": string[],  
     "Testing": string[], "Authentication": string[], "Bundler": string[]}`;
 
-  console.log('\nopenai prompt: \n', prompt, '\n');
+  // // promt to openai with the response from the grabber, which returns a string version of the url website
+  // const promtGrabber = `Returning a json object with types as below:
+  //   {"Language": string[], "Frontend": string[], "Backend": string[], "CICD": string[],
+  //   "Testing": string[], "Authentication": string[], "Bundler": string[]}
+  // What are the tech stacks required from this job post?\n\n ${grabber(url)}`;
+
+  // console.log('\nopenai prompt: \n', prompt, '\n');
+  // console.log('\nopenai prompt using grabber: \n', promtGrabber, '\n');
 
   try {
     const response = await openai.createCompletion({

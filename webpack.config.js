@@ -53,5 +53,6 @@ module.exports = {
       '/api': 'http://localhost:3000',
       secure: false,
     },
+    historyApiFallback: true,
   },
 };

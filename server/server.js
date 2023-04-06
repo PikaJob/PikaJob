@@ -24,13 +24,13 @@ app.use(cookieParser());
 //Forward all request to /api to api router
 // app.use('/api', apiRouter);
 
-// route to interact with openai api
+// route to interact with openai api, and add a job to the database
 app.post(
   '/api/job',
   chatGPTController.getTechStack,
   chatGPTController.getJobInformation,
   controller.gather,
-  // controller.frontendPackage,
+  controller.frontendPackage,
   (req, res) => {
     res.status(200).json(res.locals.jobsObj);
   },
@@ -52,7 +52,12 @@ app.put('/api/updateStatus', controller.updateStatus, (req, res) => {
 });
 
 // route to delete a job
-app.delete('/api/deleteJob', controller.deleteJob, (req, res) => {
+app.delete('/api/job/:id', controller.deleteJob, (req, res) => {
+  res.sendStatus(200);
+});
+
+// route to update the salary range of a job
+app.put('/api/updateSalary', controller.updateSalary, (req, res) => {
   res.sendStatus(200);
 });
 

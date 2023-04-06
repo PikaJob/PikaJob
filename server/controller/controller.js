@@ -81,41 +81,41 @@ controller.gather = async (req, res, next) => {
     [jobInfo.jobTitle, jobInfo.company, jobInfo.description, url, job.rows[0].id],
   );
   // attach the job and the skills to the response object like controller.frontendPackage but just for one job
-  const jobsObj = {};
-  const statusTable = await db.query('SELECT * FROM status');
+  // const jobsObj = {};
+  // const statusTable = await db.query('SELECT * FROM status');
 
-  const jobId = updateJob.rows[0].id;
-  const jobTitle = updateJob.rows[0].job_title;
-  const jobLink = updateJob.rows[0].job_link;
-  const company = updateJob.rows[0].company;
-  const submissionDate = updateJob.rows[0].submission_date;
-  // status pulled from status table using the status_id (foreign key)
-  const status = statusTable.rows[updateJob.rows[0].status_id - 1].name;
-  const sentThankYouNote = updateJob.rows[0].sent_thank_you;
-  const resume = updateJob.rows[0].resume;
-  const coverLetter = updateJob.rows[0].cover_letter;
-  const minSalary = updateJob.rows[0].min_salary;
-  const maxSalary = updateJob.rows[0].max_salary;
-  const description = updateJob.rows[0].description;
-  const techStackObj = {};
-  for (const [techstackType, techArr] of Object.entries(techStack)) {
-    techStackObj[techstackType] = techArr;
-  }
-  jobsObj[jobId] = {
-    jobTitle,
-    jobLink,
-    company,
-    submissionDate,
-    status,
-    sentThankYouNote,
-    resume,
-    coverLetter,
-    minSalary,
-    maxSalary,
-    techStack: techStackObj,
-    description,
-  };
-  res.locals.jobsObj = jobsObj;
+  // const jobId = updateJob.rows[0].id;
+  // const jobTitle = updateJob.rows[0].job_title;
+  // const jobLink = updateJob.rows[0].job_link;
+  // const company = updateJob.rows[0].company;
+  // const submissionDate = updateJob.rows[0].submission_date;
+  // // status pulled from status table using the status_id (foreign key)
+  // const status = statusTable.rows[updateJob.rows[0].status_id - 1].name;
+  // const sentThankYouNote = updateJob.rows[0].sent_thank_you;
+  // const resume = updateJob.rows[0].resume;
+  // const coverLetter = updateJob.rows[0].cover_letter;
+  // const minSalary = updateJob.rows[0].min_salary;
+  // const maxSalary = updateJob.rows[0].max_salary;
+  // const description = updateJob.rows[0].description;
+  // const techStackObj = {};
+  // for (const [techstackType, techArr] of Object.entries(techStack)) {
+  //   techStackObj[techstackType] = techArr;
+  // }
+  // jobsObj[jobId] = {
+  //   jobTitle,
+  //   jobLink,
+  //   company,
+  //   submissionDate,
+  //   status,
+  //   sentThankYouNote,
+  //   resume,
+  //   coverLetter,
+  //   minSalary,
+  //   maxSalary,
+  //   techStack: techStackObj,
+  //   description,
+  // };
+  // res.locals.jobsObj = jobsObj;
   //console.log('res.locals.jobs: ', res.locals.jobsObj);
 
   next();
@@ -240,12 +240,27 @@ controller.updateStatus = async (req, res, next) => {
 
 // route to delete a job, from the jobs table and the skills_to_job table
 controller.deleteJob = async (req, res, next) => {
-  const jobId = req.body.jobId;
+  // const jobId = req.body.jobId;
+  const jobId = req.params.id;
   // delete from the jobs table
   const deleteJob = await db.query('DELETE FROM jobs WHERE id = $1', [jobId]);
   // delete from the skills_to_job table
   const deleteSkills = await db.query('DELETE FROM skills_to_job WHERE job_id = $1', [jobId]);
   console.log('deleted job');
+  next();
+};
+
+// route to update the salary range of a job
+controller.updateSalary = async (req, res, next) => {
+  const jobId = req.body.jobId;
+  const minSalary = req.body.minSalary;
+  const maxSalary = req.body.maxSalary;
+  // update the salary range of the job
+  const updateJob = await db.query(
+    'UPDATE jobs SET min_salary = $1, max_salary = $2 WHERE id = $3',
+    [minSalary, maxSalary, jobId]
+  );
+  console.log('updated salary');
   next();
 };
 
