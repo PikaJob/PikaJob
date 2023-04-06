@@ -6,8 +6,9 @@ type JobTrackerTableProps = {
   setJobs: React.Dispatch<React.SetStateAction<jobs>>;
 };
 const headersTitle = [
-  'Title',
-  'Company',
+  // 'Title',
+  // 'Company',
+  'Position',
   'Description',
   'Status',
   // 'Sent Thank You Note',
@@ -24,10 +25,13 @@ function JobTrackerTable(props: JobTrackerTableProps) {
   // This will send a fetch request (method: delete) to the backend, receiving all the jobs except for the deleted one
   function handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
     const button = event.target as HTMLButtonElement;
-    let id: string | null = button.getAttribute('id');
-    console.log('id of the row is ', id);
-    // let remainingJobs = await fetch('/api/job/${id}'); method is DELETE, with id as paramter
+    let id: string = button.getAttribute('id')!;
+    const newJob = { ...jobs };
+    delete newJob[id];
+    setJobs(newJob);
+    fetch(`/api/job/${id}`, { method: 'DELETE' }); //method is DELETE, with id as paramter
     // retrieve remainingJobs and then do setJobs(remainingJobs)
+    // remove that from job
   }
 
   return (
@@ -46,27 +50,43 @@ function JobTrackerTable(props: JobTrackerTableProps) {
           return (
             <tr key={id}>
               <td className='w-1/12 text-center p-1 border-2 border-slate-500'>
-                <a href={job.jobLink}>{job.jobTitle}</a>
+                <a href={job.jobLink} className='font-bold'>
+                  {job.jobTitle}
+                </a>{' '}
+                <br></br> <p> {job.company} </p>
               </td>
-              <td className='w-1/12 text-center p-1 border-2 border-slate-500'>{job.company}</td>
+              {/* <td className='w-1/12 text-center p-1 border-2 border-slate-500'>{job.company}</td> 
+                ^ Commented out because we want to combine job title and company into one column
+              */}
+
               <td className='w-1/12 text-center p-1 border-2 border-slate-500'>
-                {/* {job.description} */}
+                <p className='line-clamp-6'> {job.description} </p>
                 {/* This is the  dynamic route to show only that one job's information */}
-                <Link
-                  to={`/${id}`}
-                  state={{
-                    jobTitle: job.jobTitle,
-                    description: job.description,
-                    techStack: job.techStack,
-                    company: job.company,
-                  }}
-                >
-                  View More
-                </Link>
+                <button className='mt-3 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'>
+                  <Link
+                    to={`/${id}`}
+                    state={{
+                      jobTitle: job.jobTitle,
+                      jobLink: job.jobLink,
+                      description: job.description,
+                      techStack: job.techStack,
+                      company: job.company,
+                      sentThankYouNote: job.sentThankYouNote,
+                      sentResume: job.resume,
+                      sentCoverLetter: job.coverLetter
+                    }}
+                  >
+                    View More
+                  </Link>
+                </button>
                 {/* This will trigger the handleDelete function */}
-                <button type='button' id={id} onClick={event => handleDelete(event)}>
-                  {' '}
-                  Delete{' '}
+                <button
+                  type='button'
+                  id={id}
+                  onClick={event => handleDelete(event)}
+                  className='mt-3 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
+                >
+                  Delete
                 </button>
               </td>
               <td className='w-1/12 text-center p-1 border-2 border-slate-500'>{job.status}</td>
@@ -77,7 +97,7 @@ function JobTrackerTable(props: JobTrackerTableProps) {
                       currency: 'USD',
                       maximumFractionDigits: 0,
                     })} 
-                    -
+                     -
                      ${job.maxSalary.toLocaleString('en-US', {
                        style: 'currency',
                        currency: 'USD',
@@ -116,24 +136,20 @@ function JobTrackerTable(props: JobTrackerTableProps) {
                 {
                   <div>
                     {Object.keys(job.techStack).map(techStackType => {
-                      const techs = new Set();
                       return (
                         <div key={techStackType}>
-                          <p>{techStackType} :</p>
+                          <p className='font-bold pt-2'>{techStackType}</p>
                           {/* replaced map with flatMap method to get rid of duplicate techs being listed 
                               React kept giving warnings because of duplicate keys 
                               Return an empty array means that nothing will be added to the array in the current iteration
                               https://stackoverflow.com/questions/24806772/how-to-skip-over-an-element-in-map
                           */}
-                          {job.techStack[techStackType as keyof jobs['id']['techStack']]?.flatMap(
-                            tech => {
-                              if (techs.has(tech)) {
-                                return [];
-                              }
-                              techs.add(tech);
-                              return <p key={tech}>{tech}</p>;
-                              //techs.has(tech) ? [] : <p key={tech}>{tech}</p>
-                            },
+                          {job.techStack[techStackType as keyof jobs['id']['techStack']]?.map(
+                            tech => (
+                              <span className='py-0' key={tech}>
+                                {tech},{' '}
+                              </span>
+                            ),
                           )}
                         </div>
                       );
